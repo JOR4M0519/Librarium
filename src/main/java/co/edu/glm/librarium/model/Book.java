@@ -27,15 +27,14 @@ public class Book {
     @Column(name = "copyright", nullable = false)
     private Boolean copyright;
 
+    @Column(name = "download_count")
+    private int downloadCount;
+
     @ElementCollection
     @CollectionTable(name = "book_language", joinColumns = @JoinColumn(name = "book_id"))
     @Column(name = "language")
     private List<String> languagesList;
 
-    @ElementCollection
-    @CollectionTable(name = "book_download_count", joinColumns = @JoinColumn(name = "book_id"))
-    @Column(name = "download_count")
-    private List<String> downloadCount;
 
     @ManyToMany
     @JoinTable(

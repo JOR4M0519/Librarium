@@ -18,6 +18,9 @@ public class View {
         System.out.println(message);
     }
 
+    public void sendMessageOUTLine(String message){
+        System.out.print(message);
+    }
     public void getMenu(){
         System.out.println("Selecciona una de las siguientes opciones");
         System.out.println( "\n--- Menú de Opciones ---\n");
@@ -27,6 +30,10 @@ public class View {
                             "4. Listar autores registrados vivos en un determinado año\n" +
                             "5. Listar libros registrados por idioma\n" +
                             "9. Salir");
+    }
+
+    public String changeBlankSpaceFormat(String name){
+        return name.replace(" ", "%20");
     }
 
 

@@ -14,4 +14,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 urlBase: https://gutendex.com/books
-searchParam: ?search=
+searchParamName: /?search=
+
+searhParamID: /?ids=
+
