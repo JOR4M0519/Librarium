@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: Librarium
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/librarium
+    username: postgres
+    password: root
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+urlBase: https://gutendex.com/books
+searchParam: ?search=
