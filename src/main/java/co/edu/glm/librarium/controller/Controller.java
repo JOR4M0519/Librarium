@@ -2,7 +2,9 @@ package co.edu.glm.librarium.controller;
 
 
 
-import co.edu.glm.librarium.model.Author;
+import co.edu.glm.librarium.model.AuthorEntity;
+import co.edu.glm.librarium.model.Book;
+import co.edu.glm.librarium.model.BookEntity;
 import co.edu.glm.librarium.model.dto.BookDTO;
 import co.edu.glm.librarium.model.dto.ListBookDTO;
 import co.edu.glm.librarium.services.AuthorService;
@@ -60,16 +62,7 @@ public class Controller {
                 ListBookDTO listBookDTO = gutendexUtil.getBooksListByNameGutendex(name);
 
                 listBookDTO.bookDTOList().forEach(book -> {
-                    view.sendMessageOUT("************************************************************");
-                    view.sendMessageOUT("ID: "+book.id()+" - Titulo: "+ book.title());
-
-                    view.sendMessageOUTLine("[");
-                    book.authorDTOList().forEach( author ->
-                    view.sendMessageOUTLine(" -"+author.name())
-                    );
-                    view.sendMessageOUT("]");
-
-                    view.sendMessageOUT("# Descargas: " + book.downloadCount());
+                    visualization(book);
                 });
 
                 int id = Integer.parseInt(view.getScanIN("Si desea agregar un libro determinado ingrese el número id del libro, de lo contrario,\n" +
@@ -80,30 +73,47 @@ public class Controller {
                 else
                     view.sendMessageOUT("Hubo un error, intentalo nuevamente");
 
-
                 break;
             case 2:
-
-
-
+                view.sendMessageOUT("Lista de Libros registrados:");
+                bookService.getBooksListRegistered().forEach(book -> {
+                    visualization(book);
+                }
+                );
                 break;
             case 3:
-
+                view.sendMessageOUT("************************");
+                authorService.getAuthorsListRegistered().forEach(author -> {
+                    view.sendMessageOUT("--------");
+                    visualizationAuthor(author);
+                });
+                view.sendMessageOUT("************************");
                 break;
             case 4:
+                try{
+                    short year = Short.parseShort(view.getScanIN("Ingresa el año que deseas consultar"));
 
+                    view.sendMessageOUT("************************");
+                    authorService.getAliveAuthorsListYear(year).forEach(author -> {
+                        view.sendMessageOUT("--------");
+                        visualizationAuthor(author);
+                    });
+                    view.sendMessageOUT("************************");
+                }catch (NumberFormatException e){
+                    view.sendMessageOUT("Ingresa correctamente el año, vuelve a itnentarlo");
+                    launchOptions(4);
+                }
                 break;
             case 5:
-                    //hasta aca
-                break;
-            case 6:
-
-                break;
-            case 7:
-
-                break;
-            case 8:
-
+                view.sendMessageOUT("-------------------------");
+                String language = view.getScanIN("Ingresa las iniciales del idioma => ej: en");
+                view.sendMessageOUT("''''''''''''''''''''''''''");
+                view.sendMessageOUT("Lista de Libros por el idioma "+language +":");
+                bookService.getBooksListRegisteredByLanguage(language).forEach(book -> {
+                            visualization(book);
+                        }
+                );
+                view.sendMessageOUT("-------------------------");
                 break;
             case 9:
                 view.sendMessageOUT("Saliendo del programa...");
@@ -119,13 +129,13 @@ public class Controller {
 
         try{
 
-            List<Author> authorList = new ArrayList<>();
+            List<AuthorEntity> authorEntityList = new ArrayList<>();
 
-            bookDTO.authorDTOList().forEach(authorDTO ->
-                authorList.add(authorService.saveAuthor(authorDTO))
-            );
+            bookDTO.authorList().forEach(authorDTO ->{
+                authorEntityList.add(authorService.saveAuthor(authorDTO));
+            });
 
-            bookService.saveBook(bookDTO,authorList);
+            bookService.saveBook(bookDTO, authorEntityList);
             return true;
         }catch (Exception e){
             //e.printStackTrace();
@@ -133,6 +143,25 @@ public class Controller {
             return false;
         }
 
+    }
+
+
+    public <T extends Book<A>, A> void visualization(T book) {
+        view.sendMessageOUT("************************************************************");
+        view.sendMessageOUT("ID: " + book.id() + " - Titulo: " + book.title());
+
+        view.sendMessageOUTLine("[");
+        book.authorList().forEach(author ->
+                view.sendMessageOUTLine(" -" + author.toString())  // Suponiendo que 'author' tiene un método 'name()'
+        );
+        view.sendMessageOUT("]");
+
+        view.sendMessageOUT("# Descargas: " + book.downloadCount());
+    }
+
+    public void visualizationAuthor(AuthorEntity author) {
+        view.sendMessageOUT("************************************************************");
+        view.sendMessageOUT("Author: " + author.name() + " - Año Nacimiento: " + author.getBirthYear()+ " - Año Fallecimiento: " + author.getDeathYear());
     }
 
 }

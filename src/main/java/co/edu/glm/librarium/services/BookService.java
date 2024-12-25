@@ -1,8 +1,8 @@
 package co.edu.glm.librarium.services;
 
 import co.edu.glm.librarium.exception.AppException;
-import co.edu.glm.librarium.model.Author;
-import co.edu.glm.librarium.model.Book;
+import co.edu.glm.librarium.model.AuthorEntity;
+import co.edu.glm.librarium.model.BookEntity;
 import co.edu.glm.librarium.model.dto.BookDTO;
 import co.edu.glm.librarium.repository.BookRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,30 +18,34 @@ public class BookService implements IBookPortIn{
     BookRepo bookRepo;
 
     @Override
-    public List<Book> getBooksListRegistered(String name) {
-        return null;
+    public List<BookEntity> getBooksListRegistered() {
+
+        return (List<BookEntity>) bookRepo.findAll();
     }
 
     @Override
-    public List<Book> getBooksListRegisteredByLanguage(String name) {
-        return null;
+    public List<BookEntity> getBooksListRegisteredByLanguage(String language) {
+        return bookRepo.findBooksByLanguage(language);
     }
 
     @Override
-    public void saveBook(BookDTO bookDTO, List<Author> authorList) {
+    public void saveBook(BookDTO bookDTO, List<AuthorEntity> authorEntityList) {
 
-        Book book = new Book();
-        book.setId(bookDTO.id());
-        book.setTitle(bookDTO.title());
-        book.setCopyright(bookDTO.copyright());
-        book.setDownloadCount(bookDTO.downloadCount());
-        book.setLanguagesList(bookDTO.languagesList());
-        book.setAuthorDTOList(authorList);
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId(bookDTO.id());
+        bookEntity.setTitle(bookDTO.title());
+        bookEntity.setCopyright(bookDTO.copyright());
+        bookEntity.setDownloadCount(bookDTO.downloadCount());
+        bookEntity.setLanguagesList(bookDTO.languagesList());
+        bookEntity.setAuthorEntityDTOList(authorEntityList);
 
         try{
-            bookRepo.save(book);
+            bookRepo.save(bookEntity);
         }catch (DataIntegrityViolationException e){
+            e.printStackTrace();
             throw new AppException("Libro ya registrado",409);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
 

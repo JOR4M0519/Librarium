@@ -3,6 +3,7 @@ package co.edu.glm.librarium.util;
 import co.edu.glm.librarium.model.dto.BookDTO;
 import co.edu.glm.librarium.model.dto.ListBookDTO;
 import co.edu.glm.librarium.services.IBookPortOut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,9 +11,10 @@ public class GutendexUtil implements IBookPortOut {
     //@Value("${urlBase}")
     private String urlConsume = "https://gutendex.com/books";
 
-    //@Value("${searchParam}")
+    //@Value("${searchParamName}")
     private String searchParamName = "/?search=";
 
+    //@Value("${searhParamID}")
     private String searhParamID = "/?ids=";
 
 

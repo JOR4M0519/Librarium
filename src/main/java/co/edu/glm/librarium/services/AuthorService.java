@@ -1,16 +1,15 @@
 package co.edu.glm.librarium.services;
 
 import co.edu.glm.librarium.exception.AppException;
-import co.edu.glm.librarium.model.Author;
-import co.edu.glm.librarium.model.Book;
+import co.edu.glm.librarium.model.AuthorEntity;
 import co.edu.glm.librarium.model.dto.AuthorDTO;
 import co.edu.glm.librarium.repository.AuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorService implements IAuthorPortIn{
@@ -19,38 +18,44 @@ public class AuthorService implements IAuthorPortIn{
     AuthorRepo authorRepo;
 
     @Override
-    public List<Author> getAuthorsListRegistered(String name) {
-        return null;
+    public List<AuthorEntity> getAuthorsListRegistered() {
+         return (List<AuthorEntity>) authorRepo.findAll();
     }
 
     @Override
-    public List<Author> getAliveAuthorsListYear(String name) {
-        return null;
+    public List<AuthorEntity> getAliveAuthorsListYear(short year) {
+        return authorRepo.findAliveAuthorsListYear(year);
     }
 
     @Override
-    public Author saveAuthor(AuthorDTO authorDTO){
-        Author author = new Author();
+    public AuthorEntity saveAuthor(AuthorDTO authorDTO){
+        AuthorEntity authorEntity = new AuthorEntity();
 
-        author.setName(authorDTO.name());
-        author.setBirthYear(authorDTO.birthYear());
-        author.setDeathYear(authorDTO.deathYear());
+        authorEntity.setName(authorDTO.name());
+        authorEntity.setBirthYear(authorDTO.birthYear());
+        authorEntity.setDeathYear(authorDTO.deathYear());
 
         try{
-            if(!validateDuplicate(author)) authorRepo.save(author);
-            return author;
+            AuthorEntity validateAuthor = validateDuplicate(authorEntity);
+            if(validateAuthor == null)
+                authorRepo.save(authorEntity);
+
+            return validateAuthor;
         }catch (DataIntegrityViolationException e){
             throw new AppException("Libro ya registrado",409);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new AppException("Error",409);
         }
     }
 
-    public boolean validateDuplicate(Author author){
-        if(authorRepo.findByNameAndBirthYearAndDeathYear(
-                author.getName(),
-                author.getBirthYear(),
-                author.getDeathYear())
-                .size() > 0) return true;
-        return false;
+    public AuthorEntity validateDuplicate(AuthorEntity authorEntity){
+        List<AuthorEntity> authorEntityList = authorRepo.findByNameAndBirthYearAndDeathYear(
+                authorEntity.getName(),
+                authorEntity.getBirthYear(),
+                authorEntity.getDeathYear());
+         if(authorEntityList.size() > 0) return null;
+        return authorEntityList.get(1);
     }
 
 }
