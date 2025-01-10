@@ -18,7 +18,7 @@ Librarium es un sistema de gestión de bibliotecas desarrollado en Java utilizan
 1. **Clonar el repositorio**
 
    ```bash
-   git clone <URL-del-repositorio>
+   git clone https://github.com/JOR4M0519/Librarium
    ```
 
 2. **Entrar en el directorio del proyecto**
